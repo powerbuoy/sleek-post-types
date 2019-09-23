@@ -9,5 +9,8 @@
     ],
     "autoload": {
         "files": ["post-type.php", "register.php"]
+    },
+    "require": {
+        "icanboogie/inflector": "^1.5"
     }
 }
