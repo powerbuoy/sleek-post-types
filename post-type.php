@@ -1,14 +1,22 @@
 <?php
 namespace Sleek\PostTypes;
 
-class PostType {
+abstract class PostType {
 	private $postId;
 
-	public function __construct ($postId) {
+	public function __construct ($postId = null) {
 		$this->postId = $postId;
 	}
 
 	public function getField ($name) {
 		return get_field($name, $this->postId);
+	}
+
+	public function config () {
+		return [];
+	}
+
+	public function fields () {
+		return [];
 	}
 }

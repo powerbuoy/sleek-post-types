@@ -1,27 +1,98 @@
 <?php
 namespace Sleek\PostTypes;
 
-add_action('init', function () {
-	$postTypes = [];
+use ICanBoogie\Inflector;
 
-	# Include all PostType classes
-	if (file_exists(get_stylesheet_directory() . '/post-types/')) {
-		foreach (glob(get_stylesheet_directory() . '/post-types/*.php') as $file) {
-			$filename = substr(basename($file), 0, -4);
-			$className = str_replace('-', '', ucwords($filename, '-'));
-			$ptName = str_replace('-', '_', $filename);
+$inflector = Inflector::get('en');
+$postTypes = [];
 
-			$postTypes[$ptName] = $className;
+# Make sure we have some post types
+if (file_exists(get_stylesheet_directory() . '/post-types/')) {
+	foreach (glob(get_stylesheet_directory() . '/post-types/*.php') as $file) {
+		# Include their classes
+		require_once $file;
 
-			require_once $file;
+		# Work out the post type (snake_case) and class name (PascalCase) from filename (kebab-case)
+		$ptName = str_replace('-', '_', substr(basename($file), 0, -4));
+		$className = $inflector->camelize($ptName);
+
+		# Store each post type as post_type_name => PostTypeClassName
+		$postTypes[$ptName] = $className;
+	}
+
+	# Go through and create all the post-types
+	foreach ($postTypes as $postType => $className) {
+		# Store full class name
+		$fullClassName = "Sleek\PostTypes\\$className";
+
+		# Create post type labels and slug
+		$postTypeLabel = $inflector->titleize($postType);
+		$postTypeLabelPlural = $inflector->pluralize($postTypeLabel);
+		$slug = str_replace('_', '-', $inflector->underscore($postTypeLabelPlural));
+
+		# Create instance of PostType class
+		$pt = new $fullClassName;
+
+		# And get its config
+		$ptConfig = $pt->config();
+
+		# Default post type config
+		$defaultConfig = [
+			'labels' => [
+				'name' => __($postTypeLabelPlural, 'sleek'),
+				'singular_name' => __($postTypeLabel, 'sleek')
+			],
+			'rewrite' => [
+				'with_front' => false,
+				'slug' => _x($slug, 'url', 'sleek')
+			],
+			'exclude_from_search' => false, # Never exclude from search because it prevents taxonomy archives for this post type (https://core.trac.wordpress.org/ticket/20234)
+			'has_archive' => true,
+			'public' => true,
+			'show_in_rest' => true,
+			'supports' => [
+				'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks',
+				'custom-fields', 'revisions', 'page-attributes', 'comments'
+			]
+		];
+
+		# Merge post type class config
+		$config = array_merge_recursive($defaultConfig, $ptConfig);
+
+		# If post type already exists - just merge its config
+		if (post_type_exists($postType)) {
+			add_filter('register_post_type_args', function ($args, $pType) use ($postType, $ptConfig) {
+				if ($postType === $pType) {
+					$args = array_merge_recursive($args, $ptConfig);
+				}
+
+				return $args;
+			}, 10, 2);
+		}
+		# Otherwise create the post type
+		else {
+			add_action('init', function () use ($postType, $config) {
+				register_post_type($postType, $config);
+			});
+		}
+
+		# TODO: And now create its ACF fields (NOTE: Should use Sleek\Acf\generateKeys($config, $prefix))
+		if ($fields = $pt->fields() and function_exists('acf_add_local_field_group')) {
+			$fieldGroupConfig = [
+				'key' => 'group_' . $postType . '_meta',
+				'title' => __('Information', 'sleek'),
+				'location' => [
+					[
+						[
+							'param' => 'post_type',
+							'operator' => '==',
+							'value' => $postType
+						]
+					]
+				]
+			];
+
+		#	acf_add_local_field_group($fieldGroupConfig);
 		}
 	}
-
-	# Go through
-	foreach ($postTypes as $postType => $className) {
-		$fullClassName = "Sleek\PostTypes\\$className";
-		$pt = new $fullClassName(null);
-
-		var_dump($pt->config());
-	}
-});
+}
