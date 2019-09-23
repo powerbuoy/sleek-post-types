@@ -1,0 +1,13 @@
+{
+    "name": "powerbuoy/sleek-post-types",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Andreas Lagerkvist",
+            "email": "powerbuoy@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": ["post-type.php", "register.php"]
+    }
+}
