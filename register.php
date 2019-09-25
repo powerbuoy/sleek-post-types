@@ -4,7 +4,6 @@ namespace Sleek\PostTypes;
 use ICanBoogie\Inflector;
 
 $inflector = Inflector::get('en');
-$postTypes = [];
 
 # Make sure we have some post types
 if (file_exists(get_stylesheet_directory() . '/post-types/')) {
@@ -16,12 +15,6 @@ if (file_exists(get_stylesheet_directory() . '/post-types/')) {
 		$ptName = str_replace('-', '_', substr(basename($file), 0, -4));
 		$className = $inflector->camelize($ptName);
 
-		# Store each post type as post_type_name => PostTypeClassName
-		$postTypes[$ptName] = $className;
-	}
-
-	# Go through and create all the post-types
-	foreach ($postTypes as $postType => $className) {
 		# Store full class name
 		$fullClassName = "Sleek\PostTypes\\$className";
 
