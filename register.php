@@ -12,8 +12,8 @@ if (file_exists(get_stylesheet_directory() . '/post-types/')) {
 		require_once $file;
 
 		# Work out the post type (snake_case) and class name (PascalCase) from filename (kebab-case)
-		$ptName = str_replace('-', '_', substr(basename($file), 0, -4));
-		$className = $inflector->camelize($ptName);
+		$postType = str_replace('-', '_', substr(basename($file), 0, -4));
+		$className = $inflector->camelize($postType);
 
 		# Store full class name
 		$fullClassName = "Sleek\PostTypes\\$className";
