@@ -4,6 +4,7 @@ namespace Sleek\PostTypes;
 use ICanBoogie\Inflector;
 
 function get_post_type_classes ($path = '/post-types/') {
+	$inflector = Inflector::get('en');
 	$postTypes = [];
 
 	if (file_exists(get_stylesheet_directory() . $path)) {
