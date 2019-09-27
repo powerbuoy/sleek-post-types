@@ -8,7 +8,7 @@
         }
     ],
     "autoload": {
-        "files": ["post-type.php", "register.php"]
+        "files": ["sleek-post-type.php", "sleek-post-types.php"]
     },
     "require": {
         "icanboogie/inflector": "^1.5",
