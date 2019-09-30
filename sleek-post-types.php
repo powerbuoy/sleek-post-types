@@ -3,7 +3,8 @@ namespace Sleek\PostTypes;
 
 use ICanBoogie\Inflector;
 
-function get_post_type_classes ($path = '/post-types/') {
+function get_post_type_classes () {
+	$path = apply_filters('sleek_post_types_path', '/post-types/');
 	$inflector = Inflector::get('en');
 	$postTypes = [];
 
@@ -24,10 +25,10 @@ function get_post_type_classes ($path = '/post-types/') {
 	return $postTypes;
 }
 
-$inflector = Inflector::get('en');
-
 # Make sure we have some post types
 if ($postTypes = get_post_type_classes()) {
+	$inflector = Inflector::get('en');
+
 	#########################
 	# Register each post type
 	foreach ($postTypes as $ptObject) {
@@ -41,6 +42,9 @@ if ($postTypes = get_post_type_classes()) {
 
 		# Create instance of PostType class
 		$pt = new $ptObject->fullClassName;
+
+		# Run callback
+		$pt->created();
 
 		# And get its config
 		$ptConfig = $pt->config();
@@ -133,7 +137,7 @@ add_action('init', function () {
 	foreach ($postTypes as $postType) {
 		if (
 			(isset($postType->hide_from_search) and $postType->hide_from_search === true) or
-			(isset($postType->exclude_from_search) and $postType->exclude_from_search === true)
+			(isset($postType->exclude_from_search) and $postType->exclude_from_search === true) # NOTE: Still respect exclude_from_search
 		) {
 			$hide[] = $postType->name;
 		}
