@@ -92,20 +92,13 @@ if ($postTypes = get_post_type_classes()) {
 		# And now create its ACF fields
 		if ($fields = $pt->fields() and function_exists('acf_add_local_field_group')) {
 			$groupKey = 'group_' . $ptObject->name . '_meta';
+			$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), 'field_' . $groupKey);
 			$fieldGroup = [
 				'key' => $groupKey,
-				'title' => $config['labels']['singular_name'] ?? __($postTypeLabel, 'sleek'),
+				'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($postTypeLabel, 'sleek'))),
 				'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $ptObject->name]]],
-				'fields' => [
-					[
-						'name' => $ptObject->name . '_fields',
-						'label' => __('Information', 'sleek'),
-						'type' => 'group',
-						'sub_fields' => $fields
-					]
-				]
+				'fields' => $fields
 			];
-			$fieldGroup = \Sleek\Acf\generate_keys($fieldGroup, 'field_' . $groupKey);
 
 			add_action('acf/init', function () use ($fieldGroup) {
 				acf_add_local_field_group($fieldGroup);
@@ -176,8 +169,7 @@ add_filter('register_post_type_args', function ($args, $postType) {
 				$taxonomyLabelPlural = $inflector->pluralize($taxonomyLabel);
 				$slug = str_replace('_', '-', $inflector->underscore($taxonomyLabelPlural));
 				$hierarchical = preg_match('/_tag$/', $taxonomy) ? false : true; # If taxonomy name ends in tag (eg product_tag) assume non-hierarchical
-
-				register_taxonomy($taxonomy, $postType, [
+				$config = [
 					'labels' => [
 						'name' => __($taxonomyLabelPlural, 'sleek'),
 						'singular_name' => __($taxonomyLabel, 'sleek')
@@ -190,7 +182,13 @@ add_filter('register_post_type_args', function ($args, $postType) {
 					'sort' => true,
 					'hierarchical' => $hierarchical,
 					'show_in_rest' => true
-				]);
+				];
+
+				if (isset($args['taxonomy_config'][$taxonomy])) {
+					$config = array_merge($config, $args['taxonomy_config'][$taxonomy]);
+				}
+
+				register_taxonomy($taxonomy, $postType, $config);
 			}
 		}
 	}
