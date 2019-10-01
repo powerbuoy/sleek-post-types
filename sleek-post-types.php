@@ -94,9 +94,16 @@ if ($postTypes = get_post_type_classes()) {
 			$groupKey = 'group_' . $ptObject->name . '_meta';
 			$fieldGroup = [
 				'key' => $groupKey,
-				'title' => __('Information', 'sleek'),
+				'title' => $config['labels']['singular_name'] ?? __($postTypeLabel, 'sleek'),
 				'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $ptObject->name]]],
-				'fields' => $fields
+				'fields' => [
+					[
+						'name' => $ptObject->name . '_fields',
+						'label' => __('Information', 'sleek'),
+						'type' => 'group',
+						'sub_fields' => $fields
+					]
+				]
 			];
 			$fieldGroup = \Sleek\Acf\generate_keys($fieldGroup, 'field_' . $groupKey);
 
