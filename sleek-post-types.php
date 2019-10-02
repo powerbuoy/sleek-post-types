@@ -1,63 +1,39 @@
 <?php
 namespace Sleek\PostTypes;
 
-use ICanBoogie\Inflector;
+#######################
+# Create all post types
+$files = \Sleek\Utils\get_file_meta(
+	get_stylesheet_directory() .
+	apply_filters('sleek_post_types_path', '/post-types/') .
+	'*.php'
+);
 
-function get_post_type_classes () {
-	$path = apply_filters('sleek_post_types_path', '/post-types/');
-	$inflector = Inflector::get('en');
-	$postTypes = [];
-
-	if (file_exists(get_stylesheet_directory() . $path)) {
-		foreach (glob(get_stylesheet_directory() . '/post-types/*.php') as $file) {
-			$postType = str_replace('-', '_', substr(basename($file), 0, -4));
-			$className = $inflector->camelize($postType);
-
-			$postTypes[] = (object) [
-				'name' => $postType,
-				'className' => $className,
-				'fullClassName' => "Sleek\PostTypes\\$className",
-				'path' => $file
-			];
-		}
-	}
-
-	return $postTypes;
-}
-
-# Make sure we have some post types
-if ($postTypes = get_post_type_classes()) {
-	$inflector = Inflector::get('en');
-
-	#########################
-	# Register each post type
-	foreach ($postTypes as $ptObject) {
+if ($files) {
+	foreach ($files as $file) {
 		# Include the class
-		require_once $ptObject->path;
+		require_once $file->path;
 
-		# Create post type labels and slug
-		$postTypeLabel = $inflector->titleize($ptObject->name);
-		$postTypeLabelPlural = $inflector->pluralize($postTypeLabel);
-		$slug = str_replace('_', '-', $inflector->underscore($postTypeLabelPlural));
+		# Create instance of class
+		$fullClassName = "Sleek\PostTypes\\$file->className";
 
-		# Create instance of PostType class
-		$pt = new $ptObject->fullClassName;
+		$obj = new $fullClassName;
 
 		# Run callback
-		$pt->created();
+		$obj->created();
 
 		# And get its config
-		$ptConfig = $pt->config();
+		$objConfig = $obj->config();
 
 		# Default post type config
 		$defaultConfig = [
 			'labels' => [
-				'name' => __($postTypeLabelPlural, 'sleek'),
-				'singular_name' => __($postTypeLabel, 'sleek')
+				'name' => __($file->labelPlural, 'sleek'),
+				'singular_name' => __($file->label, 'sleek')
 			],
 			'rewrite' => [
 				'with_front' => false,
-				'slug' => _x($slug, 'url', 'sleek')
+				'slug' => _x($file->slug, 'url', 'sleek')
 			],
 			'exclude_from_search' => false,
 			'has_archive' => true,
@@ -69,34 +45,34 @@ if ($postTypes = get_post_type_classes()) {
 			]
 		];
 
-		# Merge post type class config
-		$config = array_merge($defaultConfig, $ptConfig);
+		# Merge object config
+		$config = array_merge($defaultConfig, $objConfig);
 
-		# If post type already exists - just merge its config
-		if (post_type_exists($ptObject->name)) {
-			add_filter('register_post_type_args', function ($args, $pType) use ($ptObject, $ptConfig) {
-				if ($ptObject->name === $pType) {
-					$args = array_merge($args, $ptConfig);
+		# If it already exists - just merge its config
+		if (post_type_exists($file->snakeName)) {
+			add_filter('register_post_type_args', function ($args, $type) use ($file, $objConfig) {
+				if ($file->snakeName === $type) {
+					$args = array_merge($args, $objConfig);
 				}
 
 				return $args;
 			}, 10, 2);
 		}
-		# Otherwise create the post type
+		# Otherwise create it
 		else {
-			add_action('init', function () use ($ptObject, $config) {
-				register_post_type($ptObject->name, $config);
+			add_action('init', function () use ($file, $config) {
+				register_post_type($file->snakeName, $config);
 			});
 		}
 
 		# And now create its ACF fields
-		if ($fields = $pt->fields() and function_exists('acf_add_local_field_group')) {
-			$groupKey = 'group_' . $ptObject->name . '_meta';
+		if ($fields = $obj->fields() and function_exists('acf_add_local_field_group')) {
+			$groupKey = 'group_' . $file->snakeName . '_meta';
 			$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), 'field_' . $groupKey);
 			$fieldGroup = [
 				'key' => $groupKey,
-				'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($postTypeLabel, 'sleek'))),
-				'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $ptObject->name]]],
+				'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
+				'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
 				'fields' => $fields
 			];
 
@@ -109,21 +85,18 @@ if ($postTypes = get_post_type_classes()) {
 
 ################################################
 # Add support for has_single in post type config
-add_filter('register_post_type_args', function ($args, $postType) {
-	if (isset($args['has_single']) and $args['has_single'] === false) {
-		# Trigger 404 when trying to access this post type
-		add_filter('template_redirect', function () use ($postType) {
-			global $wp_query;
+add_filter('template_redirect', function () {
+	global $wp_query;
 
-			if (is_singular($postType)) {
-				status_header(404); # Sets 404 header
-				$wp_query->set_404(); # Shows 404 template
-			}
-		});
+	$postTypes = get_post_types(['public' => true], 'objects');
+
+	foreach ($postTypes as $postType) {
+		if (isset($postType->has_single) and $postType->has_single === false and is_singular($postType->name)) {
+			status_header(404); # Sets 404 header
+			$wp_query->set_404(); # Shows 404 template
+		}
 	}
-
-	return $args;
-}, 10, 2);
+});
 
 ##################################
 # Add support for hide_from_search
@@ -147,7 +120,7 @@ add_action('init', function () {
 	}
 
 	add_filter('pre_get_posts', function ($query) use ($show) {
-		if ($query->is_search() and !$query->is_admin() and $query->is_main_query() and !isset($_GET['post_type'])) {
+		if ($query->is_main_query() and $query->is_search() and !$query->is_admin() and !isset($_GET['post_type'])) {
 			$query->set('post_type', $show);
 		}
 
@@ -157,41 +130,41 @@ add_action('init', function () {
 
 #################################
 # Automatically create taxonomies
-add_filter('register_post_type_args', function ($args, $postType) {
-	$inflector = Inflector::get('en');
+add_action('init', function () {
+	$inflector = \ICanBoogie\Inflector::get('en');
+	$postTypes = get_post_types(['public' => true], 'objects');
 
-	if (isset($args['taxonomies']) and count($args['taxonomies'])) {
-		# Register all the specified taxonomies and assign them to the post type
-		foreach ($args['taxonomies'] as $taxonomy) {
-			# Only if it doesn't already exist
-			if (!taxonomy_exists($taxonomy)) {
-				$taxonomyLabel = $inflector->titleize($taxonomy);
-				$taxonomyLabelPlural = $inflector->pluralize($taxonomyLabel);
-				$slug = str_replace('_', '-', $inflector->underscore($taxonomyLabelPlural));
-				$hierarchical = preg_match('/_tag$/', $taxonomy) ? false : true; # If taxonomy name ends in tag (eg product_tag) assume non-hierarchical
-				$config = [
-					'labels' => [
-						'name' => __($taxonomyLabelPlural, 'sleek'),
-						'singular_name' => __($taxonomyLabel, 'sleek')
-					],
-					'rewrite' => [
-						'with_front' => false,
-						'slug' => _x($slug, 'url', 'sleek'),
-						'hierarchical' => $hierarchical
-					],
-					'sort' => true,
-					'hierarchical' => $hierarchical,
-					'show_in_rest' => true
-				];
+	foreach ($postTypes as $postType) {
+		if (isset($postType->taxonomies)) {
+			foreach ($postType->taxonomies as $taxonomy) {
+				# Only if it doesn't already exist
+				if (!taxonomy_exists($taxonomy)) {
+					$taxonomyLabel = $inflector->titleize($taxonomy);
+					$taxonomyLabelPlural = $inflector->pluralize($taxonomyLabel);
+					$slug = str_replace('_', '-', $inflector->underscore($taxonomyLabelPlural));
+					$hierarchical = preg_match('/_tag$/', $taxonomy) ? false : true; # If taxonomy name ends in tag (eg product_tag) assume non-hierarchical
+					$config = [
+						'labels' => [
+							'name' => __($taxonomyLabelPlural, 'sleek'),
+							'singular_name' => __($taxonomyLabel, 'sleek')
+						],
+						'rewrite' => [
+							'with_front' => false,
+							'slug' => _x($slug, 'url', 'sleek'),
+							'hierarchical' => $hierarchical
+						],
+						'sort' => true,
+						'hierarchical' => $hierarchical,
+						'show_in_rest' => true
+					];
 
-				if (isset($args['taxonomy_config'][$taxonomy])) {
-					$config = array_merge($config, $args['taxonomy_config'][$taxonomy]);
+					if (isset($postType->taxonomy_config[$taxonomy])) {
+						$config = array_merge($config, $postType->taxonomy_config[$taxonomy]);
+					}
+
+					register_taxonomy($taxonomy, $postType->name, $config);
 				}
-
-				register_taxonomy($taxonomy, $postType, $config);
 			}
 		}
 	}
-
-	return $args;
-}, 10, 2);
+});
