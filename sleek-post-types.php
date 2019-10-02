@@ -94,8 +94,8 @@ add_action('after_setup_theme', function () {
 
 			# And now create its ACF fields
 			if ($fields = $obj->fields() and function_exists('acf_add_local_field_group')) {
-				$groupKey = 'group_' . $file->snakeName . '_meta';
-				$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), 'field_' . $groupKey);
+				$groupKey = $file->snakeName . '_meta';
+				$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), $groupKey);
 				$fieldGroup = [
 					'key' => $groupKey,
 					'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
