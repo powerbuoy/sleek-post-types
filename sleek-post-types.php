@@ -35,79 +35,81 @@ function get_file_meta () {
 
 #######################
 # Create all post types
-if ($files = get_file_meta()) {
-	foreach ($files as $file) {
-		# Include the class
-		require_once $file->path;
+add_action('after_setup_theme', function () {
+	if ($files = get_file_meta()) {
+		foreach ($files as $file) {
+			# Include the class
+			require_once $file->path;
 
-		# Create instance of class
-		$fullClassName = "Sleek\PostTypes\\$file->className";
+			# Create instance of class
+			$fullClassName = "Sleek\PostTypes\\$file->className";
 
-		$obj = new $fullClassName;
+			$obj = new $fullClassName;
 
-		# Run callback
-		$obj->created();
+			# Run callback
+			$obj->created();
 
-		# And get its config
-		$objConfig = $obj->config();
+			# And get its config
+			$objConfig = $obj->config();
 
-		# Default post type config
-		$defaultConfig = [
-			'labels' => [
-				'name' => __($file->labelPlural, 'sleek'),
-				'singular_name' => __($file->label, 'sleek')
-			],
-			'rewrite' => [
-				'with_front' => false,
-				'slug' => _x($file->slug, 'url', 'sleek')
-			],
-			'exclude_from_search' => false,
-			'has_archive' => true,
-			'public' => true,
-			'show_in_rest' => true,
-			'supports' => [
-				'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks',
-				'custom-fields', 'revisions', 'page-attributes', 'comments'
-			]
-		];
-
-		# Merge object config
-		$config = array_merge($defaultConfig, $objConfig);
-
-		# If it already exists - just merge its config
-		if (post_type_exists($file->snakeName)) {
-			add_filter('register_post_type_args', function ($args, $type) use ($file, $objConfig) {
-				if ($file->snakeName === $type) {
-					$args = array_merge($args, $objConfig);
-				}
-
-				return $args;
-			}, 10, 2);
-		}
-		# Otherwise create it
-		else {
-			add_action('init', function () use ($file, $config) {
-				register_post_type($file->snakeName, $config);
-			});
-		}
-
-		# And now create its ACF fields
-		if ($fields = $obj->fields() and function_exists('acf_add_local_field_group')) {
-			$groupKey = 'group_' . $file->snakeName . '_meta';
-			$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), 'field_' . $groupKey);
-			$fieldGroup = [
-				'key' => $groupKey,
-				'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
-				'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
-				'fields' => $fields
+			# Default post type config
+			$defaultConfig = [
+				'labels' => [
+					'name' => __($file->labelPlural, 'sleek'),
+					'singular_name' => __($file->label, 'sleek')
+				],
+				'rewrite' => [
+					'with_front' => false,
+					'slug' => _x($file->slug, 'url', 'sleek')
+				],
+				'exclude_from_search' => false,
+				'has_archive' => true,
+				'public' => true,
+				'show_in_rest' => true,
+				'supports' => [
+					'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks',
+					'custom-fields', 'revisions', 'page-attributes', 'comments'
+				]
 			];
 
-			add_action('acf/init', function () use ($fieldGroup) {
-				acf_add_local_field_group($fieldGroup);
-			});
+			# Merge object config
+			$config = array_merge($defaultConfig, $objConfig);
+
+			# If it already exists - just merge its config
+			if (post_type_exists($file->snakeName)) {
+				add_filter('register_post_type_args', function ($args, $type) use ($file, $objConfig) {
+					if ($file->snakeName === $type) {
+						$args = array_merge($args, $objConfig);
+					}
+
+					return $args;
+				}, 10, 2);
+			}
+			# Otherwise create it
+			else {
+				add_action('init', function () use ($file, $config) {
+					register_post_type($file->snakeName, $config);
+				});
+			}
+
+			# And now create its ACF fields
+			if ($fields = $obj->fields() and function_exists('acf_add_local_field_group')) {
+				$groupKey = 'group_' . $file->snakeName . '_meta';
+				$fields = \Sleek\Acf\generate_keys(apply_filters('sleek_post_type_fields', $fields), 'field_' . $groupKey);
+				$fieldGroup = [
+					'key' => $groupKey,
+					'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
+					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
+					'fields' => $fields
+				];
+
+				add_action('acf/init', function () use ($fieldGroup) {
+					acf_add_local_field_group($fieldGroup);
+				});
+			}
 		}
 	}
-}
+});
 
 ################################################
 # Add support for has_single in post type config
