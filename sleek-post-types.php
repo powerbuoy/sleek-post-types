@@ -1,15 +1,41 @@
 <?php
 namespace Sleek\PostTypes;
 
+#############################
+# Get array of file meta data
+# about post type files
+function get_file_meta () {
+	$path = get_stylesheet_directory() . apply_filters('sleek_post_types_path', '/post-types/') . '*.php';
+	$inflector = \ICanBoogie\Inflector::get('en');
+	$files = [];
+
+	foreach (glob($path) as $file) {
+		$pathinfo = pathinfo($file);
+		$filename = $pathinfo['filename'];
+		$snakeName = $inflector->underscore($filename);
+		$className = $inflector->camelize($filename);
+		$label = $inflector->titleize($filename);
+		$labelPlural = $inflector->pluralize($label);
+		$slug = str_replace('_', '-', $snakeName);
+
+		$files[] = (object) [
+			'pathinfo' => $pathinfo,
+			'filename' => $pathinfo['filename'],
+			'snakeName' => $snakeName,
+			'className' => $className,
+			'label' => $label,
+			'labelPlural' => $labelPlural,
+			'slug' => $slug,
+			'path' => $file
+		];
+	}
+
+	return $files;
+}
+
 #######################
 # Create all post types
-$files = \Sleek\Utils\get_file_meta(
-	get_stylesheet_directory() .
-	apply_filters('sleek_post_types_path', '/post-types/') .
-	'*.php'
-);
-
-if ($files) {
+if ($files = get_file_meta()) {
 	foreach ($files as $file) {
 		# Include the class
 		require_once $file->path;
