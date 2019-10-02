@@ -13,7 +13,9 @@ abstract class PostType {
 		return get_field($name, $this->postId);
 	}
 
-	public function created () {}
+	public function created () {
+
+	}
 
 	public function config () {
 		return [];
