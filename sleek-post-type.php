@@ -8,11 +8,6 @@ abstract class PostType {
 		$this->postId = $postId;
 	}
 
-	# TODO: Use magic getter instead?
-	public function get_field ($name) {
-		return get_field($name, $this->postId);
-	}
-
 	public function created () {
 
 	}
