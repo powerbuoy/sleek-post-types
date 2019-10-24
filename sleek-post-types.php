@@ -1,9 +1,8 @@
 <?php
 namespace Sleek\PostTypes;
 
-#############################
-# Get array of file meta data
-# about post type files
+#############################################
+# Get array of file meta data in /post-types/
 function get_file_meta () {
 	$path = get_stylesheet_directory() . apply_filters('sleek_post_types_path', '/post-types/') . '*.php';
 	$inflector = \ICanBoogie\Inflector::get('en');
@@ -11,18 +10,20 @@ function get_file_meta () {
 
 	foreach (glob($path) as $file) {
 		$pathinfo = pathinfo($file);
-		$filename = $pathinfo['filename'];
-		$snakeName = $inflector->underscore($filename);
-		$className = $inflector->camelize($filename);
-		$label = $inflector->titleize($filename);
+		$name = $pathinfo['filename'];
+		$snakeName = $inflector->underscore($name);
+		$className = $inflector->camelize($name);
+		$label = $inflector->titleize($name);
 		$labelPlural = $inflector->pluralize($label);
 		$slug = str_replace('_', '-', $snakeName);
 
 		$files[] = (object) [
 			'pathinfo' => $pathinfo,
+			'name' => $name,
 			'filename' => $pathinfo['filename'],
 			'snakeName' => $snakeName,
 			'className' => $className,
+			'fullClassName' => "Sleek\PostTypes\\$className",
 			'label' => $label,
 			'labelPlural' => $labelPlural,
 			'slug' => $slug,
@@ -42,9 +43,7 @@ add_action('after_setup_theme', function () {
 			require_once $file->path;
 
 			# Create instance of class
-			$fullClassName = "Sleek\PostTypes\\$file->className";
-
-			$obj = new $fullClassName;
+			$obj = new $file->fullClassName;
 
 			# Run callback
 			$obj->created();
@@ -53,6 +52,7 @@ add_action('after_setup_theme', function () {
 			$objConfig = $obj->config();
 
 			# Default post type config
+			# TODO: SUpport for custom fieldConfig()
 			$defaultConfig = [
 				'labels' => [
 					'name' => __($file->labelPlural, 'sleek'),
