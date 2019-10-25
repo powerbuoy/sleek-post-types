@@ -19,4 +19,8 @@ abstract class PostType {
 	public function fields () {
 		return [];
 	}
+
+	public function get_fields ($acfKey = null) {
+		return apply_filters('sleek_post_type_fields', $this->fields());
+	}
 }
