@@ -5,17 +5,16 @@ namespace Sleek\PostTypes;
 # Get array of file meta data in /post-types/
 function get_file_meta () {
 	$path = get_stylesheet_directory() . apply_filters('sleek_post_types_path', '/post-types/') . '*.php';
-	$inflector = \ICanBoogie\Inflector::get('en');
 	$files = [];
 
 	foreach (glob($path) as $file) {
 		$pathinfo = pathinfo($file);
 		$name = $pathinfo['filename'];
-		$snakeName = $inflector->underscore($name);
-		$className = $inflector->camelize($name);
-		$label = $inflector->titleize($name);
-		$labelPlural = $inflector->pluralize($label);
-		$slug = str_replace('_', '-', $snakeName);
+		$snakeName = \Sleek\Utils\convert_case($name, 'snake');
+		$className = \Sleek\Utils\convert_case($name, 'camel');
+		$label = \Sleek\Utils\convert_case($name, 'title');
+		$labelPlural = \Sleek\Utils\convert_case($label, 'plural');
+		$slug = \Sleek\Utils\convert_case($labelPlural, 'snake');
 
 		$files[] = (object) [
 			'pathinfo' => $pathinfo,
@@ -159,7 +158,6 @@ add_action('init', function () {
 #################################
 # Automatically create taxonomies
 add_action('init', function () {
-	$inflector = \ICanBoogie\Inflector::get('en');
 	$postTypes = get_post_types(['public' => true], 'objects');
 
 	foreach ($postTypes as $postType) {
@@ -167,9 +165,9 @@ add_action('init', function () {
 			foreach ($postType->taxonomies as $taxonomy) {
 				# Only if it doesn't already exist
 				if (!taxonomy_exists($taxonomy)) {
-					$taxonomyLabel = $inflector->titleize($taxonomy);
-					$taxonomyLabelPlural = $inflector->pluralize($taxonomyLabel);
-					$slug = str_replace('_', '-', $inflector->underscore($taxonomyLabelPlural));
+					$taxonomyLabel = \Sleek\Utils\convert_case($taxonomy, 'title');
+					$taxonomyLabelPlural = \Sleek\Utils\convert_case($taxonomyLabel, 'plural');
+					$slug = \Sleek\Utils\convert_case($taxonomyLabelPlural, 'kebab');
 					$hierarchical = preg_match('/_tag$/', $taxonomy) ? false : true; # If taxonomy name ends in tag (eg product_tag) assume non-hierarchical
 					$config = [
 						'labels' => [
@@ -192,7 +190,11 @@ add_action('init', function () {
 
 					register_taxonomy($taxonomy, $postType->name, $config);
 				}
+				# Tax already exists - just assign it to the post type
+				else {
+					register_taxonomy_for_object_type($taxonomy, $postType->name);
+				}
 			}
 		}
 	}
-});
+}, 11);
