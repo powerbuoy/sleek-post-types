@@ -51,7 +51,6 @@ add_action('after_setup_theme', function () {
 			$objConfig = $obj->config();
 
 			# Default post type config
-			# TODO: SUpport for custom fieldConfig()
 			$defaultConfig = [
 				'labels' => [
 					'name' => __($file->labelPlural, 'sleek'),
@@ -61,7 +60,7 @@ add_action('after_setup_theme', function () {
 					'with_front' => false,
 					'slug' => _x($file->slug, 'url', 'sleek')
 				],
-				'exclude_from_search' => false,
+				'exclude_from_search' => false, # NOTE: Don't exclude from search as it has side effects
 				'has_archive' => true,
 				'public' => true,
 				'show_in_rest' => true,
@@ -165,8 +164,12 @@ add_action('init', function () {
 	foreach ($postTypes as $postType) {
 		if (isset($postType->taxonomies)) {
 			foreach ($postType->taxonomies as $taxonomy) {
-				# Only if it doesn't already exist
-				if (!taxonomy_exists($taxonomy)) {
+				# Tax already exists - just assign it to the post type
+				if (taxonomy_exists($taxonomy)) {
+					register_taxonomy_for_object_type($taxonomy, $postType->name);
+				}
+				# Tax doesn't exist - create it
+				else {
 					$taxonomyLabel = \Sleek\Utils\convert_case($taxonomy, 'title');
 					$taxonomyLabelPlural = \Sleek\Utils\convert_case($taxonomyLabel, 'plural');
 					$slug = \Sleek\Utils\convert_case($taxonomyLabelPlural, 'kebab');
@@ -181,21 +184,36 @@ add_action('init', function () {
 							'slug' => _x($slug, 'url', 'sleek'),
 							'hierarchical' => $hierarchical
 						],
-						'sort' => true,
 						'hierarchical' => $hierarchical,
-						'show_in_rest' => true
+						'sort' => true, # NOTE: will have WordPress retain the order in which terms are added to objects https://developer.wordpress.org/reference/functions/register_taxonomy/#comment-2687
+						'show_in_rest' => true,
+						'show_admin_column' => true
 					];
-
-					if (isset($postType->taxonomy_config[$taxonomy])) {
-						$config = array_merge($config, $postType->taxonomy_config[$taxonomy]);
-					}
 
 					register_taxonomy($taxonomy, $postType->name, $config);
 				}
-				# Tax already exists - just assign it to the post type
-				else {
-					register_taxonomy_for_object_type($taxonomy, $postType->name);
-				}
+
+				# Make it filterable
+				add_action('restrict_manage_posts', function ($pt, $which) use ($postType, $taxonomy, $hierarchical) {
+					if ($pt === $postType->name) {
+						wp_dropdown_categories([
+							'taxonomy' => $taxonomy,
+							'show_option_all' => sprintf(
+								__('All %s', 'sleek'),
+								\Sleek\Utils\convert_case(
+									\Sleek\Utils\convert_case($taxonomy, 'title'),
+									'plural'
+								)
+							),
+							'hide_empty' => false,
+							'hierarchical' => $hierarchical,
+							'name' => $taxonomy,
+							'value_field' => 'slug',
+							'selected' => $_GET[$taxonomy] ?? 0,
+							'hide_if_empty' => true
+						]);
+					}
+				}, 10, 2);
 			}
 		}
 	}
