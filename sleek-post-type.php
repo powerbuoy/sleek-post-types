@@ -24,7 +24,7 @@ abstract class PostType {
 	}
 
 	# Returns all fields before they're sent to ACF
-	public function get_fields ($acfKey = null) {
-		return apply_filters('sleek_post_type_fields', $this->fields());
+	public function get_acf_fields ($acfKey = null) {
+		return $this->fields();
 	}
 }

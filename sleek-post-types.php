@@ -92,7 +92,7 @@ add_action('after_setup_theme', function () {
 
 			# And now create its ACF fields
 			$groupKey = $file->snakeName . '_meta';
-			$fields = $fields = $obj->get_fields($groupKey);
+			$fields = $fields = $obj->get_acf_fields($groupKey);
 
 			if ($fields and function_exists('acf_add_local_field_group')) {
 				$fields = \Sleek\Acf\generate_keys($fields, $groupKey);
