@@ -210,7 +210,8 @@ add_action('init', function () {
 							'name' => $taxonomy,
 							'value_field' => 'slug',
 							'selected' => $_GET[$taxonomy] ?? 0,
-							'hide_if_empty' => true
+							'hide_if_empty' => true,
+							'show_count' => true
 						]);
 					}
 				}, 10, 2);
