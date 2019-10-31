@@ -11,7 +11,7 @@
         "files": ["sleek-post-type.php", "sleek-post-types.php"]
     },
     "require": {
-        "powerbuoy/sleek-acf": "dev-master",
-        "powerbuoy/sleek-utils": "dev-master"
+        "powerbuoy/sleek-acf": "^0.0.0",
+        "powerbuoy/sleek-utils": "^0.0.0"
     }
 }
