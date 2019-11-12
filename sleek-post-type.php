@@ -2,7 +2,7 @@
 namespace Sleek\PostTypes;
 
 abstract class PostType {
-	private $postId;
+	protected $postId;
 
 	public function __construct ($postId = null) {
 		$this->postId = $postId;
