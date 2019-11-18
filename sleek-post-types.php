@@ -100,6 +100,7 @@ add_action('after_setup_theme', function () {
 					'key' => $groupKey,
 					'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
+					'position' => 'side',
 					'fields' => $fields
 				];
 
