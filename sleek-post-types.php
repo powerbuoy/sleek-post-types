@@ -160,7 +160,7 @@ add_action('init', function () {
 #################################
 # Automatically create taxonomies
 add_action('init', function () {
-	$postTypes = get_post_types(['public' => true], 'objects');
+	$postTypes = get_post_types([], 'objects');
 
 	foreach ($postTypes as $postType) {
 		if (isset($postType->taxonomies)) {
@@ -188,7 +188,9 @@ add_action('init', function () {
 						'hierarchical' => $hierarchical,
 						'sort' => true, # NOTE: will have WordPress retain the order in which terms are added to objects https://developer.wordpress.org/reference/functions/register_taxonomy/#comment-2687
 						'show_in_rest' => true,
-						'show_admin_column' => true
+						'show_admin_column' => true,
+						'public' => $postType->public, # Inherit public and show_ui from postType
+						'show_ui' => $postType->show_ui
 					];
 
 					register_taxonomy($taxonomy, $postType->name, $config);
