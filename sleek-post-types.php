@@ -14,7 +14,7 @@ function get_file_meta () {
 		$className = \Sleek\Utils\convert_case($name, 'pascal');
 		$label = \Sleek\Utils\convert_case($name, 'title');
 		$labelPlural = \Sleek\Utils\convert_case($label, 'plural');
-		$slug = \Sleek\Utils\convert_case($labelPlural, 'snake');
+		$slug = \Sleek\Utils\convert_case($labelPlural, 'kebab');
 
 		$files[] = (object) [
 			'pathinfo' => $pathinfo,
