@@ -87,7 +87,7 @@ add_action('after_setup_theme', function () {
 			else {
 				add_action('init', function () use ($file, $config) {
 					register_post_type($file->snakeName, $config);
-				});
+				}, 10);
 			}
 
 			# And now create its ACF fields
@@ -155,7 +155,7 @@ add_action('init', function () {
 
 		return $query;
 	});
-});
+}, 11);
 
 #################################
 # Automatically create taxonomies
