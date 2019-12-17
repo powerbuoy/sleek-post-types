@@ -22,9 +22,4 @@ abstract class PostType {
 	public function fields () {
 		return [];
 	}
-
-	# Returns all fields before they're sent to ACF
-	public function get_acf_fields ($acfKey = null) {
-		return $this->fields();
-	}
 }
