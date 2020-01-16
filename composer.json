@@ -12,6 +12,7 @@
     },
     "require": {
         "powerbuoy/sleek-acf": "^1.0.0",
+        "powerbuoy/sleek-modules": "^2.0.0",
         "powerbuoy/sleek-utils": "^1.0.0"
     }
 }
