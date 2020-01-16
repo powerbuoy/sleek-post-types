@@ -91,22 +91,66 @@ add_action('after_setup_theme', function () {
 			}
 
 			# And now create its ACF fields
-			$groupKey = $file->snakeName . '_meta';
-			$fields = $obj->fields();
+			if (function_exists('acf_add_local_field_group')) {
+				# Fields
+				$groupKey = $file->snakeName . '_meta';
+				$fields = $obj->fields();
 
-			if ($fields and function_exists('acf_add_local_field_group')) {
-				$fields = \Sleek\Acf\generate_keys($fields, $groupKey);
-				$fieldGroup = [
-					'key' => $groupKey,
-					'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
-					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
-					'position' => 'side',
-					'fields' => $fields
-				];
+				if ($fields) {
+					$fieldGroup = [
+						'key' => $groupKey,
+						'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
+						'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
+						'position' => 'side',
+						'fields' => \Sleek\Acf\generate_keys($fields, $groupKey)
+					];
 
-				add_action('acf/init', function () use ($fieldGroup) {
-					acf_add_local_field_group($fieldGroup);
-				});
+					add_action('acf/init', function () use ($fieldGroup) {
+						acf_add_local_field_group($fieldGroup);
+					});
+				}
+
+				# Sticky modules
+				$groupKey = $file->snakeName . '_sticky_modules';
+				$stickyModules = $obj->sticky_modules();
+
+				if ($stickyModules) {
+					$fieldGroup = [
+						'key' => $groupKey,
+						'title' => __('Sticky Modules', 'sleek'),
+						'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
+						'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
+					];
+
+					add_action('acf/init', function () use ($fieldGroup) {
+						acf_add_local_field_group($fieldGroup);
+					});
+				}
+
+				# Flexible modules
+				$groupKey = $file->snakeName . '_flexible_modules';
+				$flexibleModules = $obj->flexible_modules();
+
+				if ($flexibleModules) {
+					$fieldGroup = [
+						'key' => 'group_' . $groupKey,
+						'title' => __('Modules', 'sleek'),
+						'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
+						'fields' => [
+							[
+								'key' => $groupKey,
+								'name' => $groupKey,
+								'button_label' => __('Add a module', 'sleek'),
+								'type' => 'flexible_content',
+								'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)
+							]
+						]
+					];
+
+					add_action('acf/init', function () use ($fieldGroup) {
+						acf_add_local_field_group($fieldGroup);
+					});
+				}
 			}
 		}
 	}

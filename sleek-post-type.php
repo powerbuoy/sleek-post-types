@@ -18,8 +18,18 @@ abstract class PostType {
 		return [];
 	}
 
-	# Returns all fields and potential defaults for this module
+	# Returns all fields
 	public function fields () {
+		return [];
+	}
+
+	# Returns all sticky modules
+	public function sticky_modules () {
+		return [];
+	}
+
+	# Returns all flexible modules
+	public function flexible_modules () {
 		return [];
 	}
 }
