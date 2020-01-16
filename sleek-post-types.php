@@ -194,30 +194,30 @@ add_action('init', function () {
 					];
 
 					register_taxonomy($taxonomy, $postType->name, $config);
-				}
 
-				# Make it filterable
-				add_action('restrict_manage_posts', function ($pt, $which) use ($postType, $taxonomy, $hierarchical) {
-					if ($pt === $postType->name) {
-						wp_dropdown_categories([
-							'taxonomy' => $taxonomy,
-							'show_option_all' => sprintf(
-								__('All %s', 'sleek'),
-								\Sleek\Utils\convert_case(
-									\Sleek\Utils\convert_case($taxonomy, 'title'),
-									'plural'
-								)
-							),
-							'hide_empty' => false,
-							'hierarchical' => $hierarchical,
-							'name' => $taxonomy,
-							'value_field' => 'slug',
-							'selected' => $_GET[$taxonomy] ?? 0,
-							'hide_if_empty' => true,
-							'show_count' => true
-						]);
-					}
-				}, 10, 2);
+					# Make it filterable
+					add_action('restrict_manage_posts', function ($pt, $which) use ($postType, $taxonomy, $hierarchical) {
+						if ($pt === $postType->name) {
+							wp_dropdown_categories([
+								'taxonomy' => $taxonomy,
+								'show_option_all' => sprintf(
+									__('All %s', 'sleek'),
+									\Sleek\Utils\convert_case(
+										\Sleek\Utils\convert_case($taxonomy, 'title'),
+										'plural'
+									)
+								),
+								'hide_empty' => false,
+								'hierarchical' => $hierarchical,
+								'name' => $taxonomy,
+								'value_field' => 'slug',
+								'selected' => $_GET[$taxonomy] ?? 0,
+								'hide_if_empty' => true,
+								'show_count' => true
+							]);
+						}
+					}, 10, 2);
+				}
 			}
 		}
 	}
