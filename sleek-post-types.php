@@ -97,13 +97,13 @@ add_action('after_setup_theme', function () {
 				$fields = $obj->fields();
 
 				if ($fields) {
-					$fieldGroup = [
+					$fieldGroup = apply_filters('sleek_post_type_fields', [
 						'key' => $groupKey,
 						'title' => sprintf(__('%s information', 'sleek'), ($config['labels']['singular_name'] ?? __($file->label, 'sleek'))),
 						'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $file->snakeName]]],
 						'position' => 'side',
 						'fields' => \Sleek\Acf\generate_keys($fields, $groupKey)
-					];
+					], $file);
 
 					add_action('acf/init', function () use ($fieldGroup) {
 						acf_add_local_field_group($fieldGroup);
