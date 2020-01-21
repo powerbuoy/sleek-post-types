@@ -181,7 +181,7 @@ add_action('after_setup_theme', function () {
 						'fields' => [
 							[
 								'key' => $groupKey,
-								'name' => 'flexible_archive_modules',
+								'name' => 'flexible_modules',
 								'button_label' => __('Add a module', 'sleek'),
 								'type' => 'flexible_content',
 								'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)
