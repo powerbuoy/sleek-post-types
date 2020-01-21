@@ -139,7 +139,49 @@ add_action('after_setup_theme', function () {
 						'fields' => [
 							[
 								'key' => $groupKey,
-								'name' => $groupKey,
+								'name' => 'flexible_modules',
+								'button_label' => __('Add a module', 'sleek'),
+								'type' => 'flexible_content',
+								'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)
+							]
+						]
+					];
+
+					add_action('acf/init', function () use ($fieldGroup) {
+						acf_add_local_field_group($fieldGroup);
+					});
+				}
+
+				# Sticky archive modules
+				$groupKey = $file->snakeName . '_sticky_archive_modules';
+				$stickyModules = $obj->sticky_archive_modules();
+
+				if ($stickyModules) {
+					$fieldGroup = [
+						'key' => $groupKey,
+						'title' => __('Sticky Archive Modules', 'sleek'),
+						'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => $file->snakeName . '_archive_settings']]],
+						'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
+					];
+
+					add_action('acf/init', function () use ($fieldGroup) {
+						acf_add_local_field_group($fieldGroup);
+					});
+				}
+
+				# Flexible archive modules
+				$groupKey = $file->snakeName . '_flexible_archive_modules';
+				$flexibleModules = $obj->flexible_archive_modules();
+
+				if ($flexibleModules) {
+					$fieldGroup = [
+						'key' => 'group_' . $groupKey,
+						'title' => __('Modules', 'sleek'),
+						'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => $file->snakeName . '_archive_settings']]],
+						'fields' => [
+							[
+								'key' => $groupKey,
+								'name' => 'flexible_archive_modules',
 								'button_label' => __('Add a module', 'sleek'),
 								'type' => 'flexible_content',
 								'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)

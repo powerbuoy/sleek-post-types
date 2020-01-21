@@ -32,4 +32,14 @@ abstract class PostType {
 	public function flexible_modules () {
 		return [];
 	}
+
+	# Returns all sticky archive modules
+	public function sticky_archive_modules () {
+		return [];
+	}
+
+	# Returns all flexible archive modules
+	public function flexible_archive_modules () {
+		return [];
+	}
 }
