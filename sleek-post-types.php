@@ -213,6 +213,19 @@ add_filter('template_redirect', function () {
 	}
 });
 
+#######################################
+# Remove !has_single from Yoast Sitemap
+# NOTE: This removes the archive from the sitemap too... :/
+add_filter('wpseo_sitemap_exclude_post_type', function ($value, $post_type) {
+	$pt = get_post_type_object($post_type);
+
+	if (isset($pt->has_single) and $pt->has_single === false) {
+		return true;
+	}
+
+	return false;
+}, 10, 2);
+
 ##################################
 # Add support for hide_from_search
 # because exclude_from_search has side effects
