@@ -62,7 +62,7 @@ Return an array of ACF fields from here and they will be added to the post type.
 
 #### `PostType::sticky_modules()`
 
-Return an array of module names and they will be added to the post type.
+Return an array of module names and they will be added to the post type. Render a sticky module using `Sleek\Modules\render('name-of-module')`.
 
 #### `PostType::flexible_modules()`
 
@@ -79,7 +79,7 @@ Render a flexible module field using `Sleek\Modules\render_flexible('flexible_mo
 
 #### `PostType::sticky_archive_modules()`
 
-Return an array of module names and they will be added to the post type's settings page.
+Return an array of module names and they will be added to the post type's settings page. Render a sticky module using `Sleek\Modules\render('name-of-module', 'mycpt_settings')`.
 
 #### `PostType::flexible_archive_modules()`
 
