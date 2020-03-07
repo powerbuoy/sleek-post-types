@@ -1,3 +1,5 @@
+# Sleek Post Types
+
 Create post types by creating classes in `/post-types/`:
 
 ```

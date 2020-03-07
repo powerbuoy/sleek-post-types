@@ -9,7 +9,7 @@ abstract class PostType {
 	}
 
 	# Lifecycle hook
-	public function created () {
+	public function init () {
 
 	}
 

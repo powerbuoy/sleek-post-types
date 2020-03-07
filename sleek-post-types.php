@@ -49,7 +49,7 @@ add_action('after_setup_theme', function () {
 			$obj = new $file->fullClassName;
 
 			# Run callback
-			$obj->created();
+			$obj->init();
 
 			# And get its config
 			$objConfig = $obj->config();
