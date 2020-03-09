@@ -1,6 +1,7 @@
 <?php
 namespace Sleek\PostTypes;
 
+require_once __DIR__ . '/admin-bar-links.php';
 require_once __DIR__ . '/register-fields.php';
 require_once __DIR__ . '/register-taxonomies.php';
 require_once __DIR__ . '/settings-pages.php';
