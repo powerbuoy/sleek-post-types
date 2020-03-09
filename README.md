@@ -1,4 +1,10 @@
-# Sleek Post Types
+# [Sleek Post Types](https://github.com/powerbuoy/sleek-post-types/)
+
+[![Packagist](https://img.shields.io/packagist/vpre/powerbuoy/sleek-post-types.svg?style=flat-square)](https://packagist.org/packages/powerbuoy/sleek-post-types)
+[![GitHub license](https://img.shields.io/github/license/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/issues)
+[![GitHub forks](https://img.shields.io/github/forks/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/network)
+[![GitHub stars](https://img.shields.io/github/stars/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/stargazers)
 
 Create post types by creating classes in `/post-types/`.
 

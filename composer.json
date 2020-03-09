@@ -1,5 +1,6 @@
 {
     "name": "powerbuoy/sleek-post-types",
+    "description": "Create post types by creating classes in /post-types/.",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
