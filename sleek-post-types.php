@@ -2,6 +2,8 @@
 namespace Sleek\PostTypes;
 
 require_once __DIR__ . '/admin-bar-links.php';
+require_once __DIR__ . '/has-single.php';
+require_once __DIR__ . '/hide-from-search.php';
 require_once __DIR__ . '/register-fields.php';
 require_once __DIR__ . '/register-taxonomies.php';
 require_once __DIR__ . '/settings-pages.php';
@@ -97,61 +99,3 @@ add_action('after_setup_theme', function () {
 		}
 	}
 });
-
-################################################
-# Add support for has_single in post type config
-add_filter('template_redirect', function () {
-	global $wp_query;
-
-	$postTypes = get_post_types(['public' => true], 'objects');
-
-	foreach ($postTypes as $postType) {
-		if (isset($postType->has_single) and $postType->has_single === false and is_singular($postType->name)) {
-			status_header(404); # Sets 404 header
-			$wp_query->set_404(); # Shows 404 template
-		}
-	}
-});
-
-#######################################
-# Remove !has_single from Yoast Sitemap
-# NOTE: This removes the archive from the sitemap too... :/
-add_filter('wpseo_sitemap_exclude_post_type', function ($value, $post_type) {
-	$pt = get_post_type_object($post_type);
-
-	if (isset($pt->has_single) and $pt->has_single === false) {
-		return true;
-	}
-
-	return false;
-}, 10, 2);
-
-##################################
-# Add support for hide_from_search
-# because exclude_from_search has side effects
-# https://core.trac.wordpress.org/ticket/20234
-add_action('init', function () {
-	$postTypes = get_post_types(['public' => true], 'objects');
-	$hide = [];
-	$show = [];
-
-	foreach ($postTypes as $postType) {
-		if (
-			(isset($postType->hide_from_search) and $postType->hide_from_search === true) or
-			(isset($postType->exclude_from_search) and $postType->exclude_from_search === true) # NOTE: Still respect exclude_from_search
-		) {
-			$hide[] = $postType->name;
-		}
-		else {
-			$show[] = $postType->name;
-		}
-	}
-
-	add_filter('pre_get_posts', function ($query) use ($show) {
-		if ($query->is_main_query() and $query->is_search() and !$query->is_admin() and !isset($_GET['post_type'])) {
-			$query->set('post_type', $show);
-		}
-
-		return $query;
-	});
-}, 11);
