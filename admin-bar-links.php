@@ -3,6 +3,10 @@ namespace Sleek\PostTypes;
 
 # Simon ♥️
 add_action('admin_bar_menu', function ($adminBar) {
+	if (!function_exists('acf_add_options_page')) {
+		return;
+	}
+
 	global $wp_query;
 
 	# Grab all post types
