@@ -3,6 +3,8 @@ namespace Sleek\PostTypes;
 
 add_action('init', function () {
 	if (!function_exists('acf_add_options_page')) {
+	#	trigger_error("sleek/post_types/settings_pages acf_add_options_page() is not defined, unable to create settings pages (have you enabled ACF?)", E_USER_WARNING);
+
 		return;
 	}
 
@@ -61,4 +63,4 @@ add_action('init', function () {
 			}
 		}
 	}
-}, 99);
+}, 99); # NOTE: 99 = make sure all post-types are registered

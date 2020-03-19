@@ -3,6 +3,8 @@ namespace Sleek\PostTypes;
 
 add_action('init', function () {
 	if (!function_exists('acf_add_local_field_group')) {
+	#	trigger_error("sleek/post_types/acf_fields acf_add_local_field_group() is not defined, unable to create acf fields (have you enabled ACF?)", E_USER_WARNING);
+
 		return;
 	}
 
