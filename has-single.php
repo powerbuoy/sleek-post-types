@@ -95,4 +95,4 @@ add_filter('wpseo_exclude_from_sitemap_by_post_ids', function () {
 	}
 
 	return $ids;
-});
+}, 99);
