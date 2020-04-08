@@ -26,13 +26,13 @@ add_action('init', function () {
 			# Sticky fields
 			if ($fields = $obj->fields()) {
 				$groupKey = $postType->name . '_meta';
-				$fieldGroup = apply_filters('sleek/post_types/fields', [
+				$fieldGroup = apply_filters('sleek/post_types/field_group', [
 					'key' => $groupKey,
 					'title' => sprintf(__('%s information', 'sleek'), $postType->labels->singular_name),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $postType->name]]],
 					'position' => 'side',
-					'fields' => \Sleek\Acf\generate_keys($fields, $groupKey)
-				], $postType);
+					'fields' => \Sleek\Acf\generate_keys(apply_filters('sleek/post_types/fields', $fields, $postType), $groupKey)
+				], $postType, $groupKey);
 
 				acf_add_local_field_group($fieldGroup);
 			}
