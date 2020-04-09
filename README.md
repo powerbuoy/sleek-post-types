@@ -14,6 +14,10 @@ N/A
 
 ## Hooks
 
+### `sleek/post_types/field_group`
+
+Filter the ACF field group for post types before they're added.
+
 ### `sleek/post_types/fields`
 
 Filter the ACF fields for post types before they're added.
