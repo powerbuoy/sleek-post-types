@@ -27,6 +27,21 @@ add_action('init', function () {
 				'post_id' => $postType->name . '_settings'
 			]);
 
+			# Make options page translatable with WPML
+			# https://www.advancedcustomfields.com/my-account/view-tickets/?conversation_id=504150372
+			add_filter('acf/validate_post_id', function ($postId) use ($postType) {
+				if ($postId === $postType->name . '_settings') {
+					$defaultLanguage = acf_get_setting('default_language');
+					$currentLanguage = acf_get_setting('current_language');
+
+					if ($currentLanguage and $currentLanguage !== $defaultLanguage) {
+						$postId .= '_' . $currentLanguage;
+					}
+				}
+
+				return $postId;
+			});
+
 			# Ignore post-types with no archives (built-in post post type has_archive = false but still has archives)
 			if ($hasArchive) {
 				# Add some standard fields (title, description, image)
