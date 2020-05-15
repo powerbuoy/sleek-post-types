@@ -47,8 +47,8 @@ add_action('admin_bar_menu', function ($adminBar) {
 					'href' => admin_url('edit.php?post_type=' . $postType->name . '&page=' . $postType->name . '_settings')
 				]);
 			}
-			# Build-in POST is of course special
-			elseif (!is_admin() and $postType->name === 'post' and (is_archive() or is_home())) {
+			# Built-in POST is of course special
+			elseif (!is_admin() and $postType->name === 'post' and is_home()) {
 				$adminBar->remove_node('edit');
 				$adminBar->add_menu([
 					'id' => 'sleek-edit-archive',
