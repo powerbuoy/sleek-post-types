@@ -57,6 +57,12 @@ add_action('after_setup_theme', function () {
 			# And get its config
 			$objConfig = $obj->config();
 
+			if (!is_array($objConfig)) {
+				trigger_error("{$file->fullClassName}->config() did not return an array", E_USER_WARNING);
+
+				$objConfig = [];
+			}
+
 			# Default post type config
 			$defaultConfig = [
 				'labels' => [
