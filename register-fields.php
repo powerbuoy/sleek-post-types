@@ -45,6 +45,7 @@ add_action('init', function () {
 					'key' => $groupKey,
 					'title' => __('Sticky Modules', 'sleek'),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $postType->name]]],
+					'menu_order' => -2,
 					'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
 				];
 
@@ -59,6 +60,7 @@ add_action('init', function () {
 					'key' => $groupKey,
 					'title' => __('Sticky Archive Modules', 'sleek'),
 					'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => $postType->name . '_settings']]],
+					'menu_order' => -1,
 					'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
 				];
 
