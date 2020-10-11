@@ -12,7 +12,7 @@ add_action('init', function () {
 	$postTypes = get_post_types([], 'objects');
 
 	foreach ($postTypes as $postType) {
-		$hasArchive = (!(isset($postType->has_archive) and $postType->has_archive === false) or $postType->name === 'post');
+		$hasArchive = ((!(isset($postType->has_archive) and $postType->has_archive === false) or $postType->name === 'post') and ($postType->public === true));
 		$hasSettings = (isset($postType->has_settings) and $postType->has_settings === true);
 		$disableSettings = (isset($postType->has_settings) and $postType->has_settings === false);
 
