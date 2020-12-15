@@ -61,9 +61,11 @@ add_action('init', function () {
 					[
 						'label' => __('Description', 'sleek'),
 						'name' => 'description',
-						'type' => 'wysiwyg'
+						'type' => 'wysiwyg',
+						'media_upload' => false,
+						'toolbar' => 'simple'
 					]
-				], $postType->name), $groupKey);
+				], $postType->name), $groupKey); # TODO: Pass in $postType - NOT $postType->name
 
 				acf_add_local_field_group([
 					'key' => $groupKey,
