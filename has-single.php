@@ -96,3 +96,15 @@ add_filter('wpseo_exclude_from_sitemap_by_post_ids', function () {
 
 	return $ids;
 }, 99);
+
+########################################
+# Remove Yoast meta box from !has_single
+add_action('add_meta_boxes', function () {
+	$postTypes = get_post_types(['public' => true], 'objects');
+
+	foreach ($postTypes as $postType) {
+		if (isset($postType->has_single) and $postType->has_single === false) {
+			remove_meta_box('wpseo_meta', $postType->name, 'normal');
+		}
+	}
+}, 100);
