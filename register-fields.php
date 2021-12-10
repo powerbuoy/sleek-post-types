@@ -28,7 +28,7 @@ add_action('init', function () {
 				$groupKey = $postType->name . '_meta';
 				$fieldGroup = apply_filters('sleek/post_types/field_group', [
 					'key' => $groupKey,
-					'title' => sprintf(__('%s information', 'sleek'), $postType->labels->singular_name),
+					'title' => sprintf(__('%s information', 'sleek_admin'), $postType->labels->singular_name),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $postType->name]]],
 					'position' => 'side',
 					'fields' => \Sleek\Acf\generate_keys(apply_filters('sleek/post_types/fields', $fields, $postType), $groupKey)
@@ -43,7 +43,7 @@ add_action('init', function () {
 				$groupKey = $postType->name . '_sticky_modules';
 				$fieldGroup = [
 					'key' => $groupKey,
-					'title' => __('Sticky Modules', 'sleek'),
+					'title' => __('Sticky Modules', 'sleek_admin'),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $postType->name]]],
 					'menu_order' => -2,
 					'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
@@ -58,7 +58,7 @@ add_action('init', function () {
 				$groupKey = $postType->name . '_archive_sticky_modules';
 				$fieldGroup = [
 					'key' => $groupKey,
-					'title' => __('Sticky Archive Modules', 'sleek'),
+					'title' => __('Sticky Archive Modules', 'sleek_admin'),
 					'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => $postType->name . '_settings']]],
 					'menu_order' => -1,
 					'fields' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($stickyModules, 'tabs'), $groupKey)
@@ -78,7 +78,7 @@ add_action('init', function () {
 					$flexibleFields[] = [
 						'key' => $groupKey,
 						'name' => 'flexible_modules',
-						'button_label' => __('Add a module', 'sleek'),
+						'button_label' => __('Add a module', 'sleek_admin'),
 						'type' => 'flexible_content',
 						'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)
 					];
@@ -96,7 +96,7 @@ add_action('init', function () {
 						$flexibleFields[] = [
 							'key' => $flexGroupKey,
 							'name' => $moduleArea,
-							'button_label' => __('Add a module', 'sleek'),
+							'button_label' => __('Add a module', 'sleek_admin'),
 							'type' => 'flexible_content',
 							'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($modules, 'flexible'), $flexGroupKey)
 						];
@@ -106,7 +106,7 @@ add_action('init', function () {
 				# Create the group
 				$fieldGroup = [
 					'key' => 'group_' . $groupKey,
-					'title' => __('Modules', 'sleek'),
+					'title' => __('Modules', 'sleek_admin'),
 					'location' => [[['param' => 'post_type', 'operator' => '==', 'value' => $postType->name]]],
 					'fields' => $flexibleFields
 				];
@@ -125,7 +125,7 @@ add_action('init', function () {
 					$flexibleFields[] = [
 						'key' => $groupKey,
 						'name' => 'flexible_modules',
-						'button_label' => __('Add a module', 'sleek'),
+						'button_label' => __('Add a module', 'sleek_admin'),
 						'type' => 'flexible_content',
 						'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($flexibleModules, 'flexible'), $groupKey)
 					];
@@ -143,7 +143,7 @@ add_action('init', function () {
 						$flexibleFields[] = [
 							'key' => $flexGroupKey,
 							'name' => $moduleArea,
-							'button_label' => __('Add a module', 'sleek'),
+							'button_label' => __('Add a module', 'sleek_admin'),
 							'type' => 'flexible_content',
 							'layouts' => \Sleek\Acf\generate_keys(\Sleek\Modules\get_module_fields($modules, 'flexible'), $flexGroupKey)
 						];
@@ -153,7 +153,7 @@ add_action('init', function () {
 				# Create the group
 				$fieldGroup = [
 					'key' => 'group_' . $groupKey,
-					'title' => __('Modules', 'sleek'),
+					'title' => __('Modules', 'sleek_admin'),
 					'location' => [[['param' => 'options_page', 'operator' => '==', 'value' => $postType->name . '_settings']]],
 					'fields' => $flexibleFields
 				];

@@ -45,7 +45,8 @@ add_action('init', function () {
 							wp_dropdown_categories([
 								'taxonomy' => $taxonomy,
 								'show_option_all' => sprintf(
-									__('All %s', 'sleek'),
+									# Translators: For example "All [blog categories]"
+									__('All %s', 'sleek_admin'),
 									\Sleek\Utils\convert_case(
 										\Sleek\Utils\convert_case($taxonomy, 'title'),
 										'plural'

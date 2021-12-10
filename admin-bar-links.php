@@ -33,7 +33,7 @@ add_action('admin_bar_menu', function ($adminBar) {
 				if ($correctPage) {
 					$adminBar->add_menu([
 						'id' => 'sleek-view-archive',
-						'title' => __('View Archive', 'sleek'),
+						'title' => __('View Archive', 'sleek_admin'),
 						'href' => get_post_type_archive_link($postType->name)
 					]);
 				}
@@ -43,7 +43,7 @@ add_action('admin_bar_menu', function ($adminBar) {
 			if (!is_admin() and $hasArchive and is_post_type_archive($postType->name)) {
 				$adminBar->add_menu([
 					'id' => 'sleek-edit-archive',
-					'title' => __('Edit Archive', 'sleek'),
+					'title' => __('Edit Archive', 'sleek_admin'),
 					'href' => admin_url('edit.php?post_type=' . $postType->name . '&page=' . $postType->name . '_settings')
 				]);
 			}
@@ -52,7 +52,7 @@ add_action('admin_bar_menu', function ($adminBar) {
 				$adminBar->remove_node('edit');
 				$adminBar->add_menu([
 					'id' => 'sleek-edit-archive',
-					'title' => __('Edit Archive', 'sleek'),
+					'title' => __('Edit Archive', 'sleek_admin'),
 					'href' => admin_url('edit.php?page=post_settings')
 				]);
 			}
@@ -61,14 +61,14 @@ add_action('admin_bar_menu', function ($adminBar) {
 			if (!is_admin() and $postType->name === 'post' and is_singular($postType->name)) {
 				$adminBar->add_menu([
 					'id' => 'sleek-edit-settings',
-					'title' => sprintf(__('Edit %s Settings', 'sleek'), $postType->labels->singular_name),
+					'title' => sprintf(__('Edit %s Settings', 'sleek_admin'), $postType->labels->singular_name),
 					'href' => admin_url('edit.php?page=post_settings')
 				]);
 			}
 			elseif (!is_admin() and is_singular($postType->name)) {
 				$adminBar->add_menu([
 					'id' => 'sleek-edit-settings',
-					'title' => sprintf(__('Edit %s Settings', 'sleek'), $postType->labels->singular_name),
+					'title' => sprintf(__('Edit %s Settings', 'sleek_admin'), $postType->labels->singular_name),
 					'href' => admin_url('edit.php?post_type=' . $postType->name . '&page=' . $postType->name . '_settings')
 				]);
 			}

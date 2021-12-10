@@ -20,7 +20,8 @@ add_action('init', function () {
 		if (($hasArchive or $hasSettings) and !$disableSettings) {
 			# Create the options page
 			acf_add_options_page([
-				'page_title' => sprintf(__('%s Settings', 'sleek'), $postType->labels->singular_name),
+				# Translators: For example "[Blog] Settings"
+				'page_title' => sprintf(__('%s Settings', 'sleek_admin'), $postType->labels->singular_name),
 				'menu_slug' => $postType->name . '_settings',
 				'parent_slug' => $postType->name === 'post' ? 'edit.php' : 'edit.php?post_type=' . $postType->name,
 				'icon_url' => 'dashicons-welcome-write-blog',
@@ -48,18 +49,18 @@ add_action('init', function () {
 				$groupKey = $postType->name . '_settings';
 				$fields = \Sleek\Acf\generate_keys(apply_filters('sleek/post_types/archive_fields', [
 					[
-						'label' => __('Title', 'sleek'),
+						'label' => __('Title', 'sleek_admin'),
 						'name' => 'title',
 						'type' => 'text'
 					],
 					[
-						'label' => __('Image', 'sleek'),
+						'label' => __('Image', 'sleek_admin'),
 						'name' => 'image',
 						'type' => 'image',
 						'return_format' => 'id'
 					],
 					[
-						'label' => __('Description', 'sleek'),
+						'label' => __('Description', 'sleek_admin'),
 						'name' => 'description',
 						'type' => 'wysiwyg',
 						'media_upload' => false,
@@ -69,7 +70,7 @@ add_action('init', function () {
 
 				acf_add_local_field_group([
 					'key' => $groupKey,
-					'title' => __('Archive Settings', 'sleek'),
+					'title' => __('Archive Settings', 'sleek_admin'),
 					'fields' => $fields,
 					'location' => [[[
 						'param' => 'options_page',
