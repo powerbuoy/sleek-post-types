@@ -23,7 +23,14 @@ add_action('init', function () {
 	}
 
 	add_filter('pre_get_posts', function ($query) use ($show) {
-		if ($query->is_main_query() and $query->is_search() and !$query->is_admin() and !isset($_GET['post_type'])) {
+		if (
+			$query->is_main_query() and
+			$query->is_search() and
+			!$query->is_admin() and
+			!is_home() and
+			!is_post_type_archive() and
+			!isset($_GET['post_type'])
+		) {
 			$query->set('post_type', $show);
 		}
 
