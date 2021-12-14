@@ -27,8 +27,8 @@ add_action('init', function () {
 			$query->is_main_query() and
 			$query->is_search() and
 			!$query->is_admin() and
-			!is_home() and
-			!is_post_type_archive() and
+			!$query->is_home() and
+			!$query->is_post_type_archive() and
 			!isset($_GET['post_type'])
 		) {
 			$query->set('post_type', $show);
