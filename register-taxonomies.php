@@ -34,7 +34,12 @@ add_action('init', function () {
 						'show_in_rest' => true,
 						'show_admin_column' => true,
 						'public' => $postType->public, # Inherit public and show_ui from postType
-						'show_ui' => $postType->show_ui
+						'show_ui' => $postType->show_ui,
+
+						# Simon ❤️
+						'sleek' => [
+							'sleek' => true
+						]
 					];
 
 					register_taxonomy($taxonomy, $postType->name, $config);

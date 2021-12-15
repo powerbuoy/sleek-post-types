@@ -7,6 +7,7 @@ require_once __DIR__ . '/hide-from-search.php';
 require_once __DIR__ . '/register-fields.php';
 require_once __DIR__ . '/register-taxonomies.php';
 require_once __DIR__ . '/settings-pages.php';
+require_once __DIR__ . '/make-cpt-strings.php';
 
 #############################################
 # Get array of file meta data in /post-types/
@@ -80,6 +81,11 @@ add_action('after_setup_theme', function () {
 				'supports' => [
 					'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks',
 					'custom-fields', 'revisions', 'page-attributes', 'comments'
+				],
+
+				# Simon ❤️
+				'sleek' => [
+					'sleek' => true
 				]
 			];
 
