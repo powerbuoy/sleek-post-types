@@ -1,6 +1,7 @@
 <?php
 namespace Sleek\PostTypes;
 
+#[AllowDynamicProperties]
 abstract class PostType {
 	protected $postId;
 
