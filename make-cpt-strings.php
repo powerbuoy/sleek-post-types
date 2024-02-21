@@ -1,12 +1,14 @@
 <?php
 if (class_exists('WP_CLI')) {
 	WP_CLI::add_command('sleek make-cpt-strings', function ($args, $argsAssoc) {
-		$src = __DIR__ . '/../../../post-types/*.php';
 		$dest = __DIR__ . '/../../../dist/lang/cpt-strings.php';
 		$strings = [
 			'<?php'
 		];
 
+		# TODO: singular_name and name are the TRANSLATED versions of CPTs 😬
+		# We always want to use the ORIGINAL language... how do we do this
+		# switch_to_locale('en_US'); doesn't work
 		foreach (get_post_types([], 'objects') as $cpt) {
 			if (isset($cpt->sleek)) {
 				$strings[] = '# Translators: The name of the "' . $cpt->labels->singular_name . '" post type';
