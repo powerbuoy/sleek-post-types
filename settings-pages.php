@@ -68,16 +68,18 @@ add_action('init', function () {
 					]
 				], $postType->name), $groupKey); # TODO: Pass in $postType - NOT $postType->name
 
-				acf_add_local_field_group([
-					'key' => $groupKey,
-					'title' => __('Archive Settings', 'sleek_admin'),
-					'fields' => $fields,
-					'location' => [[[
-						'param' => 'options_page',
-						'operator' => '==',
-						'value' => $postType->name . '_settings'
-					]]]
-				]);
+				if ($fields) {
+					acf_add_local_field_group([
+						'key' => $groupKey,
+						'title' => __('Archive Settings', 'sleek_admin'),
+						'fields' => $fields,
+						'location' => [[[
+							'param' => 'options_page',
+							'operator' => '==',
+							'value' => $postType->name . '_settings'
+						]]]
+					]);
+				}
 			}
 		}
 	}
