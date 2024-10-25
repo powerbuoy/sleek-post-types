@@ -6,6 +6,12 @@ if (class_exists('WP_CLI')) {
 			'<?php'
 		];
 
+		$withSlugs = true;
+
+		if (isset($argsAssoc['slugs']) and $argsAssoc['slugs'] == false) {
+			$withSlugs = false;
+		}
+
 		# TODO: singular_name and name are the TRANSLATED versions of CPTs 😬
 		# We always want to use the ORIGINAL language... how do we do this
 		# switch_to_locale('en_US'); doesn't work
@@ -17,7 +23,7 @@ if (class_exists('WP_CLI')) {
 				$strings[] = '# Translators: The plural name of the "' . $cpt->labels->singular_name . '" post type';
 				$strings[] = "_e(" . json_encode($cpt->labels->name) . ", 'sleek');\n";
 
-				if (isset($cpt->rewrite['slug'])) {
+				if ($withSlugs and isset($cpt->rewrite['slug'])) {
 					$strings[] = '# Translators: The URL of the "' . $cpt->labels->singular_name . '" post type archive';
 					$strings[] = "_ex(" . json_encode($cpt->rewrite['slug']) . ", 'url', 'sleek');\n";
 				}
@@ -31,7 +37,7 @@ if (class_exists('WP_CLI')) {
 						$strings[] = '# Translators: The plural name of the "' . $tax->labels->singular_name . '" taxonomy';
 						$strings[] = "_e(" . json_encode($tax->labels->name) . ", 'sleek');\n";
 
-						if (isset($tax->rewrite['slug'])) {
+						if ($withSlugs and isset($tax->rewrite['slug'])) {
 							$strings[] = '# Translators: The URL of the "' . $tax->labels->singular_name . '" taxonomy archive';
 							$strings[] = "_ex(" . json_encode($tax->rewrite['slug']) . ", 'url', 'sleek');\n";
 						}

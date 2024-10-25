@@ -74,7 +74,7 @@ add_action('after_setup_theme', function () {
 					'with_front' => false,
 					'slug' => _x($file->slug, 'url', 'sleek')
 				],
-				'exclude_from_search' => false, # NOTE: Don't exclude from search as it has side effects
+				'exclude_from_search' => false, # NOTE: Don't exclude from search as it has side effects # TODO: I don't remember why this is set to false by default, it should be based on public... (not set at all)
 				'has_archive' => true,
 				'public' => true,
 				'show_in_rest' => true,
