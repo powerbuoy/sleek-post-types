@@ -8,7 +8,7 @@ if (class_exists('WP_CLI')) {
 
 		$withSlugs = true;
 
-		if (isset($argsAssoc['slugs']) and $argsAssoc['slugs'] == false) {
+		if (isset($argsAssoc['slugs']) and $argsAssoc['slugs'] == 'false') {
 			$withSlugs = false;
 		}
 
