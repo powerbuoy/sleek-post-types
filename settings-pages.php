@@ -66,7 +66,7 @@ add_action('init', function () {
 						'media_upload' => false,
 						'toolbar' => 'simple'
 					]
-				], $postType->name), $groupKey); # TODO: Pass in $postType - NOT $postType->name
+				], $postType), $groupKey);
 
 				if ($fields) {
 					acf_add_local_field_group([

@@ -1,5 +1,9 @@
 # [Sleek Post Types](https://github.com/powerbuoy/sleek-post-types/)
 
+BREAKING! v7
+	- exclude_from_search no longer set to false by default
+	- sleek/post_types/archive_fields filter now gets passed the post type object - not just its name - as its second argument
+
 [![Packagist](https://img.shields.io/packagist/vpre/powerbuoy/sleek-post-types.svg?style=flat-square)](https://packagist.org/packages/powerbuoy/sleek-post-types)
 [![GitHub license](https://img.shields.io/github/license/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/powerbuoy/sleek-post-types.svg?style=flat-square)](https://github.com/powerbuoy/sleek-post-types/issues)
